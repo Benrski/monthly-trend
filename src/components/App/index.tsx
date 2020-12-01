@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import data from "../../data.json";
+import { isDateInRange, parseDate } from "../../utilites/date_utilities";
 import Header from "../Header";
 import Month from "../Month";
 import Summary from "../Summary";
@@ -10,27 +11,17 @@ const App: React.FC = () => {
   const [selectionEnd, setSelectionEnd] = useState<Date | undefined>();
 
   function isSelected(month: Date): boolean {
-    const startEnd =
-      selectionStart &&
-      selectionStart <= month &&
-      selectionEnd &&
-      selectionEnd >= month
-        ? true
-        : false;
-    const endStart =
-      selectionStart &&
-      selectionStart >= month &&
-      selectionEnd &&
-      selectionEnd <= month
-        ? true
-        : false;
-    return startEnd || endStart;
+    if (selectionStart && selectionEnd) {
+      return isDateInRange(month, selectionStart, selectionEnd);
+    } else {
+      return false;
+    }
   }
 
   let totalDocuments = 0;
   let totalRevenue = 0;
   for (let i = 0; i < data.length; i++) {
-    const month = new Date(data[i].month);
+    const month = parseDate(data[i].month);
     if (!selectionStart || !selectionEnd || isSelected(month)) {
       totalDocuments += data[i].documents;
       totalRevenue += data[i].revenue;
@@ -43,7 +34,7 @@ const App: React.FC = () => {
   );
 
   const months = data.map((value) => {
-    const month = new Date(value.month);
+    const month = parseDate(value.month);
     return (
       <Month
         key={value.month}
