@@ -5,5 +5,5 @@ export function formatCurrency(value: number | null | undefined): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
-  return nf.format(value ?? 0);
+  return nf.format(value ? value : 0);
 }
